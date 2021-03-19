@@ -40,14 +40,11 @@ describe('playwright', function () {
         configuration.setLayoutBreakpoints(true);
 
         // Add browsers with different viewports
-        configuration.addBrowser(800, 600, BrowserType.CHROME);
-        configuration.addBrowser(700, 500, BrowserType.CHROME);
-        configuration.addBrowser(1600, 1200, BrowserType.CHROME);
-        configuration.addBrowser(1024, 768, BrowserType.CHROME);
-        configuration.addBrowser(700, 500, BrowserType.FIREFOX);
         configuration.addBrowser(1600, 1200, BrowserType.IE_11);
-        configuration.addBrowser(1024, 768, BrowserType.EDGE_CHROMIUM);
-        configuration.addBrowser(800, 600, BrowserType.SAFARI);
+        configuration.addBrowser(1600, 1200, BrowserType.CHROME);
+        configuration.addBrowser(1600, 1200, BrowserType.FIREFOX);
+        configuration.addBrowser(1600, 1200, BrowserType.EDGE_CHROMIUM);
+        configuration.addBrowser(1600, 1200, BrowserType.SAFARI);
 
         // Add mobile emulation devices in Portrait mode
         configuration.addDeviceEmulation(DeviceName.iPhone_X, ScreenOrientation.PORTRAIT);
@@ -60,21 +57,20 @@ describe('playwright', function () {
 
     it('ultraFastTest', async () => {
 
-        // Navigate to the url we want to test
-        // ⭐️ Note to see visual bugs, run the test using the above URL for the 1st run.
-        // but then change the above URL to https://demo.applitools.com/index_v2.html
-        // (for the 2nd run)
         await page.goto('http://page-templates.azurewebsites.net/#M365Scc.MiniReview.Default');
         await page.waitForSelector('[name=ListPage]');
         // Call Open on eyes to initialize a test session
-        await eyes.open(page, 'Demo App', 'Ultrafast grid demo', new RectangleSize(1024, 768));
+        await eyes.open(page, 'Demo App', 'Ultrafast grid demo', new RectangleSize(1600, 1200));
+
+        await page.waitForSelector('.ms-List');
+        await eyes.check('Main Page', Target.window().fully().scrollRootElement("#viewport"));
 
         // check the login page with fluent api, see more info here
         await page.click('[name=ListPage]');
         await page.waitForSelector('.highcharts-container');
 
-        await eyes.check('Main Page', Target.window());
-
+        await eyes.check('List Page', Target.window().fully().scrollRootElement("#viewport"));
+        //await eyes.check('List Page2', Target.region("#viewport").fully().scrollRootElement("#viewport"));
         // Call Close on eyes to let the server know it should display the results
         await eyes.close();
     });
